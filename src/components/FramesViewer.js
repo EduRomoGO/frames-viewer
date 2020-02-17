@@ -6,28 +6,35 @@ const retrieveFrames = variant => {
   return variant.body.creative_list[0].working_data.frames;
 };
 
-const processColumns = columns => {
-  return columns;
-}
-
 const processVariant = (variant) => {
   // const processData = ([variant, columns]) => {
   const frames = retrieveFrames(variant);
   // const cleanColumns = processColumns(columns);
 
-  console.log(frames);
+  // console.log(frames);
   // console.log(cleanColumns);
+  return frames;
 };
 
 
-const processData = (endpoint, data) => {
-
+const processColumns = columns => {
+  return columns.body
+    .filter(item => item.is_hidden === false)
+    .map(({ id, parent_frame_id, size_id, key_name }) => ({ id, parent_frame_id, size_id, key_name }));
 }
 
 
-// recuperar datos (columns y variant)
+const processData = (endpoint, data) => {
+  const endpointMap = {
+    '/variant': () => processVariant(data),
+    '/columns': () => processColumns(data),
+  };
+
+  return endpointMap[endpoint]();
+};
+
+
 // procesar los datos
-// almacenarlos en el estado
 // pintar la tabla
 
 
@@ -43,25 +50,17 @@ const FramesViewer = () => {
     const fetchData = async () => {
       setIsLoading(true);
       await fetchEndpointData('/variant')
-        // .then(variant => {
-        //   if (variant) {
-        //     processVariant(variant);
-        //   }
-        // });
-
       await fetchEndpointData('/columns')
-        // .then(processColumns)
-        setIsLoading(false);
+      setIsLoading(false);
     }
 
-    // mockFetch('/columns')
-    //   .then(console.log);
 
     fetchData();
   }, []);
 
   function fetchEndpointData(endpoint) {
     return mockFetch(endpoint)
+      .then(data => processData(endpoint, data))
       .then(data => {
         if (endpoint === '/variant') {
           setVariant(data);
@@ -69,9 +68,8 @@ const FramesViewer = () => {
           setColumns(data);
         }
 
-        return data;
+        // return data;
       })
-      // .then(data => processData(endpoint, data))
       .catch(err => {
         console.log(err);
         if (err.status) {
