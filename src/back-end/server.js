@@ -11,7 +11,7 @@ const getResponse = responseBody => {
   const failFactorRange = { min: 0.85, max: 1 };
   const notAuthorisedRange = { min: 0.75, max: 0.85 };
   const status = Math.random();
-  
+
   if (isInRange(failFactorRange, status)) {
     throw new Error(serverStatus.INTERNAL_SERVER_ERROR);
   } else if (isInRange(notAuthorisedRange, status)) {
@@ -51,6 +51,6 @@ export const mockFetch = endpoint => {
         default:
           resolve(response);
       }
-    }, serverDelay);
+    }, 600);
   });
 };
