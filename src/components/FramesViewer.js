@@ -10,7 +10,7 @@ const processColumns = columns => {
   return columns;
 }
 
-const processData = (variant) => {
+const processVariant = (variant) => {
   // const processData = ([variant, columns]) => {
   const frames = retrieveFrames(variant);
   // const cleanColumns = processColumns(columns);
@@ -19,56 +19,98 @@ const processData = (variant) => {
   // console.log(cleanColumns);
 };
 
+
+const processData = (endpoint, data) => {
+
+}
+
+
 // recuperar datos (columns y variant)
 // procesar los datos
 // almacenarlos en el estado
 // pintar la tabla
 
-const fetchData = () => {
-  return Promise.all([mockFetch('/variant'), mockFetch('/columns')]);
-};
-
 
 const FramesViewer = () => {
+  const [variant, setVariant] = useState({});
+  const [columns, setColumns] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState({
-    endpoints: [],
+    endpoints: {},
     error: false,
   });
   useEffect(() => {
-    // fetchData()
+    const fetchData = async () => {
+      setIsLoading(true);
+      await fetchEndpointData('/variant')
+        // .then(variant => {
+        //   if (variant) {
+        //     processVariant(variant);
+        //   }
+        // });
 
-    fetchVariant();
-    // if (error.isError && error.endpoints[])
-    // .then(frames => setFrames(frames))
-    // .catch(err => { throw new Error(err) });
+      await fetchEndpointData('/columns')
+        // .then(processColumns)
+        setIsLoading(false);
+    }
 
+    // mockFetch('/columns')
+    //   .then(console.log);
+
+    fetchData();
   }, []);
 
-  function fetchVariant() {
-    mockFetch('/variant')
+  function fetchEndpointData(endpoint) {
+    return mockFetch(endpoint)
+      .then(data => {
+        if (endpoint === '/variant') {
+          setVariant(data);
+        } else if (endpoint === '/columns') {
+          setColumns(data);
+        }
+
+        return data;
+      })
+      // .then(data => processData(endpoint, data))
       .catch(err => {
         console.log(err);
-        setIsError(state => {
-          return {
-            error: true,
-            endpoints: [
-              ...state.endpoints,
-              {
-                name: '/variant',
-                status: err.status,
+        if (err.status) {
+          setIsError(state => {
+            return {
+              error: true,
+              endpoints: {
+                ...state.endpoints,
+                [endpoint]: err.status,
               },
-            ],
-          };
-        });
+            };
+          });
+        }
       });
-    // .then(processData)
-    // .catch(error => setIsError(state => {
-    //   return { error: true, api: ['/variant']};
-    // }));
   }
 
+  function doRetry() {
+    setIsError({
+      endpoints: {},
+      error: false,
+    });
+    Object.keys(isError.endpoints).forEach(endpoint => fetchEndpointData(endpoint));
+  }
+
+  const renderErrorView = () => {
+    return <div>an error happened <button onClick={doRetry}>try again</button></div>;
+  }
+
+  const renderLoadingView = () => {
+    return <div>Loading...</div>
+  }
+
+
   return <section className='c-frames-viewer'>
-    {isError ? <div>an error happened</div> : 'fv'}
+    {
+      isLoading
+        ? renderLoadingView()
+        : isError.error ? renderErrorView() : 'fv'
+    }
   </section>
 };
 
