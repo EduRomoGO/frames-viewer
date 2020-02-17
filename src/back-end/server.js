@@ -12,7 +12,7 @@ const getResponse = responseBody => {
   const notAuthorisedRange = { min: 0.75, max: 0.85 };
   const status = Math.random();
 
-  if (isInRange(failFactorRange, status)) {
+  if (true) {
     throw new Error(serverStatus.INTERNAL_SERVER_ERROR);
   } else if (isInRange(notAuthorisedRange, status)) {
     throw new Error(serverStatus.UNAUTHORIZED);
@@ -36,17 +36,26 @@ const getResponse = responseBody => {
 export const mockFetch = endpoint => {
   const serverDelay = MAX_DELAY * Math.random();
 
-  return new Promise(resolve => {
+
+  return new Promise((resolve, reject) => {
     let response = null;
+
+    // I have modified this method so the fake server actually returns something to the front, even if it is a 500/401 error, otherwise it just throws an error that I am not able to catch in my code
+    const returnResponse = (item) => {
+      try {
+        resolve(getResponse(item));
+      } catch (err) {
+        reject({ status: err.message });
+      }
+    };
+
     setTimeout(() => {
       switch (endpoint) {
         case "/variant":
-          response = getResponse(variant);
-          resolve(response);
+          returnResponse(variant);
           break;
         case "/columns":
-          response = getResponse(columns);
-          resolve(response);
+          returnResponse(columns);
           break;
         default:
           resolve(response);
