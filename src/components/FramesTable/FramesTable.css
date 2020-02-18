@@ -1,0 +1,33 @@
+/* ************** */
+/* Table */
+/* ************** */
+
+
+table {
+  /* border: 2px solid black; */
+  border-collapse: collapse;
+  text-align: left;
+  width: 100%;
+  font-size: 0.75rem;
+  table-layout: fixed;
+}
+
+thead {
+  background-color: #d1f5e9;
+}
+
+th {
+  text-transform: capitalize;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+tr {
+  border-bottom: 1px solid #e2dddd;
+}
+
+td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import './FramesTable.css';
 
 const renderTableHeader = names => {
   const getDisplayName = name => name.replace('$', '').match(/[A-Z][a-z]+/g).join(' ');

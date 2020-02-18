@@ -47,6 +47,8 @@ const FramesViewer = () => {
               },
             };
           });
+        } else {
+          throw new Error(err);
         }
       });
   }
