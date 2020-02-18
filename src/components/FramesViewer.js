@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { mockFetch } from '../back-end/server.js';
 import FramesTable from './FramesTable/FramesTable.js';
 import { processData, prepareForRender } from './dataConverter.js';
+import Button from './uic/Button/Button.js';
 
 
 const FramesViewer = () => {
@@ -78,10 +79,17 @@ const FramesViewer = () => {
         return framesArray.filter(item => item.position === visibleFrames);
       }
 
+      const handleFramesButtonClick = buttonName => {
+        setVisibleFrames(buttonName);
+      }
+
       return <section className='c-frame-view'>
         <header>
           <h1>Frames</h1>
         </header>
+        <Button name='first' onClick={handleFramesButtonClick} />
+        <Button name='middle' onClick={handleFramesButtonClick} />
+        <Button name='last' onClick={handleFramesButtonClick} />
         <FramesTable visibleFramesList={getVisibleFramesList(framesArray, visibleFrames)} columnNamesList={columnNamesList} />
       </section>
     } else {

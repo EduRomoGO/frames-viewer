@@ -1,0 +1,44 @@
+.button {
+  border: none;
+}
+
+
+.button:hover {
+  -webkit-transition: all 150ms linear;
+  transition: all 150ms linear;
+  opacity: .85;
+}
+
+.button:active {
+  -webkit-transition: all 150ms linear;
+  transition: all 150ms linear;
+  opacity: .75;
+}
+
+.button:focus {
+  outline: 1px dotted #959595;
+  outline-offset: -4px;
+}
+
+.button:disabled {
+  border: 1px solid grey;
+  background-color: lightgrey;
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.button--salmon {
+  color: var(--color-snow);
+  background: var(--color-salmon);
+}
+
+.button--sun {
+  color: black;
+  background: var(--color-sun);
+  box-shadow: none;
+}
+
+.button--big-font {
+  font-size: 1.3rem;
+}
