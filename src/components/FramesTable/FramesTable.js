@@ -20,10 +20,9 @@ const getColumnsFor = (frameId, columns) => {
 const renderFrameRow = ({ frameId, content }, columns) => {
   const getData = columnName => allColumnNames(getColumnsFor(frameId, columns)).includes(columnName) ? content[columnName] : '';
 
-  // content.filter(item => isItemInColumns)
-
   return <tr key={frameId}>
     {allColumnNames(columns).map(columnName => <td key={columnName}>{getData(columnName)}</td>)}
+    {/* {allColumnNames(columns).map(columnName => <td key={columnName}>{content[columnName]}</td>)} */}
   </tr>;
 }
 
@@ -36,10 +35,10 @@ const renderTableBody = (frames, columns) => {
 }
 
 
-const FramesTable = ({ variant, columns, visibleFrames }) => {
+const FramesTable = ({ visibleFramesList: frames, columns }) => {
   return <table>
     {renderTableHeader(allColumnNames(columns))}
-    {renderTableBody(variant[visibleFrames], columns)}
+    {renderTableBody(frames, columns)}
   </table>
 };
 

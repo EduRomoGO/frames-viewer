@@ -73,3 +73,14 @@ export const processData = (endpoint, data) => {
 
   return endpointMap[endpoint]();
 };
+
+
+const allColumnNames = columns => [...new Set(columns.map(({ keyName }) => keyName))];
+
+
+export const prepareForRender = ({columns, frames}) => {
+  return {
+    columnNamesList: allColumnNames(columns),
+    // framesArr:
+  };
+};

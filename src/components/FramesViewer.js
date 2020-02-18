@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { mockFetch } from '../back-end/server.js';
 import FramesTable from './FramesTable/FramesTable.js';
-import { processData } from './dataConverter.js';
+import { processData, prepareForRender } from './dataConverter.js';
 
 
 const FramesViewer = () => {
   const [visibleFrames, setVisibleFrames] = useState('first');
-  const [variant, setVariant] = useState({});
+  const [frames, setFrames] = useState({});
   const [columns, setColumns] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState({
@@ -19,18 +19,19 @@ const FramesViewer = () => {
       await fetchEndpointData('/variant')
       await fetchEndpointData('/columns')
       setIsLoading(false);
-    }
-
+    };
 
     fetchData();
   }, []);
+
+
 
   function fetchEndpointData(endpoint) {
     return mockFetch(endpoint)
       .then(data => processData(endpoint, data))
       .then(data => {
         if (endpoint === '/variant') {
-          setVariant(data);
+          setFrames(data);
         } else if (endpoint === '/columns') {
           setColumns(data);
         }
@@ -50,6 +51,8 @@ const FramesViewer = () => {
       });
   }
 
+
+
   function doRetry() {
     setIsError({
       endpoints: {},
@@ -66,13 +69,16 @@ const FramesViewer = () => {
     return <div>Loading...</div>
   }
 
-  const renderFrameView = (visibleFrames, columns, variant) => {
-    if (visibleFrames && columns.length && Object.keys(variant).length > 0) {
+  const renderFrameView = (visibleFrames, columns, frames) => {
+    if (visibleFrames && columns.length && Object.keys(frames).length > 0) {
+      const { columnNamesList, framesArr } = prepareForRender({columns, frames})
+
       return <section className='c-frame-view'>
         <header>
           <h1>Frames</h1>
         </header>
-        <FramesTable variant={variant} columns={columns} visibleFrames={visibleFrames} />
+        <FramesTable columns={columns} visibleFramesList={frames[visibleFrames]} />
+        {/* {/* <FramesTable frames={framesArr} columnNamesList={columnNamesList} /> */} */}
       </section>
     } else {
       return '';
@@ -84,7 +90,7 @@ const FramesViewer = () => {
     {
       isLoading
         ? renderLoadingView()
-        : isError.error ? renderErrorView() : renderFrameView(visibleFrames, columns, variant)
+        : isError.error ? renderErrorView() : renderFrameView(visibleFrames, columns, frames)
     }
   </section>
 };
