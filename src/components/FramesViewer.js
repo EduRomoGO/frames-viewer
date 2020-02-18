@@ -49,8 +49,6 @@ const retrieveFrames = variant => {
 const processVariant = (variant) => {
   const frames = retrieveFrames(variant);
   const framesCamelCased = toCamelCaseData(frames);
-  console.log(frames)
-  console.log(framesCamelCased)
 
   return framesCamelCased;
 };
@@ -65,9 +63,6 @@ const retrieveInterestingData = columns => {
 const processColumns = columns => {
   const subColumns = retrieveInterestingData(columns);
   const subColumnsCamelCase = toCamelCaseData(subColumns);
-
-  console.log(subColumns);
-  console.log(subColumnsCamelCase);
 
   return subColumnsCamelCase;
 }
@@ -88,6 +83,7 @@ const processData = (endpoint, data) => {
 
 
 const FramesViewer = () => {
+  const [visibleFrames, setVisibleFrames] = useState('first');
   const [variant, setVariant] = useState({});
   const [columns, setColumns] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -149,12 +145,25 @@ const FramesViewer = () => {
     return <div>Loading...</div>
   }
 
+  const renderFrame = ({ frameTemplateId, content }) => {
+    console.log(content)
+    return <div key={frameTemplateId}>{content.length}</div>
+  }
+
+  const renderFrameView = (frames) => {
+    if (variant[frames]) {
+      const framesArray = Array.isArray(variant[frames]) ? variant[frames] : [variant[frames]];
+
+      return framesArray.length > 0 ? framesArray.map(renderFrame) : '';
+    }
+  };
+
 
   return <section className='c-frames-viewer'>
     {
       isLoading
         ? renderLoadingView()
-        : isError.error ? renderErrorView() : 'fv'
+        : isError.error ? renderErrorView() : renderFrameView(visibleFrames)
     }
   </section>
 };
