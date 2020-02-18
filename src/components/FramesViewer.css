@@ -8,25 +8,21 @@ button + button {
   margin-left: 0.5rem;
 }
 
-.modal {
-  /* position: absolute;
-  right: 0px;
-  left: 0px;
-  top: 0px;
-  bottom: 0px; */
+.modal__inner {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
+  position: relative;
+  bottom: 2rem;
 }
 
 .modal__text {
-  padding: 112px;
-  background-color: white;
-  border: 1px solid black;
   border-radius: 3px;
   position: relative;
 }
 
 .modal__close {
-  position: absolute;
+  text-align: right;
+  cursor: pointer;
 }

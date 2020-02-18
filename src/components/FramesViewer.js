@@ -78,22 +78,28 @@ const FramesViewer = () => {
 
   const renderUnauthorizedError = () => {
 
-    // I am asuming that closing the modal clears the errors
+    // I am asuming that closing the modal retries the calls
     const closeModal = () => {
       doRetry();
+    };
+
+    const customStyles = {
+      content: {
+        height: '200px',
+      }
     };
 
     return <Modal
       key='modal'
       isOpen={isError.error}
       onRequestClose={closeModal}
+      style={customStyles}
     >
-      <div>You are not authorised</div>
+      <div className='modal__close' onClick={closeModal}>x</div>
+      <div className='modal__inner'>
+        <div className='modal__text'>You are not authorised</div>
+      </div>
     </Modal>
-    // return <div key='modal' className='modal'>
-    //   <div className='modal__close'>x</div>
-    //   <div className='modal__text'>You are not authorised</div>
-    // </div>
   }
 
   const renderErrorView = isError => {
