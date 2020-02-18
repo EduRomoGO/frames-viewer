@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import FramesViewer from './components/FramesViewer.js';
+import FramesViewer from './components/FramesViewer/FramesViewer.js';
 
 function App() {
   return (

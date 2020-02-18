@@ -14,7 +14,7 @@ const getResponse = responseBody => {
 
   if (isInRange(failFactorRange, status)) {
     throw new Error(serverStatus.INTERNAL_SERVER_ERROR);
-  } else if (true) {
+  } else if (isInRange(notAuthorisedRange, status)) {
   // } else if (isInRange(notAuthorisedRange, status)) {
     throw new Error(serverStatus.UNAUTHORIZED);
   }

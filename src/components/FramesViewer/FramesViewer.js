@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { mockFetch } from '../back-end/server.js';
-import FramesTable from './FramesTable/FramesTable.js';
+import { mockFetch } from '../../back-end/server.js';
+import FramesTable from '../FramesTable/FramesTable.js';
 import { processData, prepareForRender } from './dataConverter.js';
-import Button from './uic/Button/Button.js';
-import { copyToClipboard } from '../utils/copyToClipboard.js';
+import Button from '../uic/Button/Button.js';
+import { copyToClipboard } from '../../utils/copyToClipboard.js';
 import './FramesViewer.css';
 import Modal from 'react-modal';
 
@@ -18,7 +18,6 @@ const FramesViewer = () => {
     endpoints: {},
     error: false,
   });
-  const [isOpenModal, setIsOpenModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
