@@ -61,6 +61,6 @@ export const mockFetch = endpoint => {
         default:
           resolve(response);
       }
-    }, 600);
+    }, serverDelay);
   });
 };
