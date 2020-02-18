@@ -150,11 +150,37 @@ const FramesViewer = () => {
     return <div key={frameTemplateId}>{content.length}</div>
   }
 
-  const renderFrameView = (frames) => {
+  const renderTableHeader = names => {
+    const getDisplayName = name => name.replace('$', '').match(/[A-Z][a-z]+/g).join(' ');
+
+    return <thead>
+      <tr>
+        {names.map(name => <th key={name}>{getDisplayName(name)}</th>)}
+      </tr>
+    </thead>;
+  };
+
+
+  const renderTable = (columns) => {
+    const allColumnNames = columns => [...new Set(columns.map(({keyName}) => keyName))];
+
+    return <table>
+      {renderTableHeader(allColumnNames(columns))}
+    </table>;
+  }
+
+  const renderFrameView = (frames, columns, variant) => {
     if (variant[frames]) {
       const framesArray = Array.isArray(variant[frames]) ? variant[frames] : [variant[frames]];
 
-      return framesArray.length > 0 ? framesArray.map(renderFrame) : '';
+
+      return <section className='c-frame-view'>
+        <header>
+          <h1>Frames</h1>
+        </header>
+        {renderTable(columns)}
+        {framesArray.length > 0 ? framesArray.map(renderFrame) : ''}
+      </section>
     }
   };
 
@@ -163,7 +189,7 @@ const FramesViewer = () => {
     {
       isLoading
         ? renderLoadingView()
-        : isError.error ? renderErrorView() : renderFrameView(visibleFrames)
+        : isError.error ? renderErrorView() : renderFrameView(visibleFrames, columns, variant)
     }
   </section>
 };
