@@ -114,7 +114,6 @@ const FramesViewer = () => {
         }
       })
       .catch(err => {
-        console.log(err);
         if (err.status) {
           setIsError(state => {
             return {
@@ -145,10 +144,8 @@ const FramesViewer = () => {
     return <div>Loading...</div>
   }
 
-  const renderFrame = ({ frameTemplateId, content }) => {
-    console.log(content)
-    return <div key={frameTemplateId}>{content.length}</div>
-  }
+
+  const allColumnNames = columns => [...new Set(columns.map(({keyName}) => keyName))];
 
   const renderTableHeader = names => {
     const getDisplayName = name => name.replace('$', '').match(/[A-Z][a-z]+/g).join(' ');
@@ -160,27 +157,45 @@ const FramesViewer = () => {
     </thead>;
   };
 
+  const getColumnsFor = (frameId, columns) => {
+    return columns.filter(({parentFrameId}) => parentFrameId === frameId);
+  }
 
-  const renderTable = (columns) => {
-    const allColumnNames = columns => [...new Set(columns.map(({keyName}) => keyName))];
+  const renderFrameRow = ({ frameId, content }, columns) => {
+    const getData = columnName => allColumnNames(getColumnsFor(frameId, columns)).includes(columnName) ? content[columnName] : '';
 
+    // content.filter(item => isItemInColumns)
+
+    return <tr key={frameId}>
+      {allColumnNames(columns).map(columnName => <td key={columnName}>{getData(columnName)}</td>)}
+    </tr>;
+  }
+
+  const renderTableBody = (frames, columns) => {
+    const framesArray = Array.isArray(frames) ? frames : [frames];
+
+    return <tbody>
+      {framesArray.length > 0 ? framesArray.map(frame => renderFrameRow(frame, columns)) : ''}
+    </tbody>
+  }
+
+  const renderTable = (columns, frames) => {
     return <table>
       {renderTableHeader(allColumnNames(columns))}
+      {renderTableBody(frames, columns)}
     </table>;
   }
 
-  const renderFrameView = (frames, columns, variant) => {
-    if (variant[frames]) {
-      const framesArray = Array.isArray(variant[frames]) ? variant[frames] : [variant[frames]];
-
-
+  const renderFrameView = (visibleFrames, columns, variant) => {
+    if (visibleFrames && columns.length && Object.keys(variant).length > 0) {
       return <section className='c-frame-view'>
         <header>
           <h1>Frames</h1>
         </header>
-        {renderTable(columns)}
-        {framesArray.length > 0 ? framesArray.map(renderFrame) : ''}
+        {renderTable(columns, variant[visibleFrames])}
       </section>
+    } else {
+      return '';
     }
   };
 
