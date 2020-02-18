@@ -74,22 +74,33 @@ const FramesViewer = () => {
 
   const renderFrameView = (visibleFrames, columns, frames) => {
     if (visibleFrames && columns.length && Object.keys(frames).length > 0) {
-      const { columnNamesList, framesArray } = prepareForRender({columns, frames})
+      const { columnNamesList, framesArray } = prepareForRender({ columns, frames })
       const getVisibleFramesList = (framesArray, visibleFrames) => {
-        return framesArray.filter(item => item.position === visibleFrames);
-      }
+        return visibleFrames === 'all' ? framesArray : framesArray.filter(item => item.position === visibleFrames);
+      };
 
       const handleFramesButtonClick = buttonName => {
         setVisibleFrames(buttonName);
       }
 
-      return <section className='c-frame-view'>
+      const handleCopyButton = () => {
+        setVisibleFrames('all');
+      }
+
+      return <section className='c-frame-viewer__subwrapper'>
         <header>
           <h1>Frames</h1>
         </header>
-        <Button name='first' onClick={handleFramesButtonClick} />
-        <Button name='middle' onClick={handleFramesButtonClick} />
-        <Button name='last' onClick={handleFramesButtonClick} />
+        <section className='c-frame-viewer__actions'>
+          <div className='c-frame-viewer__actions-frames'>
+            <Button name='first' onClick={handleFramesButtonClick} />
+            <Button name='middle' onClick={handleFramesButtonClick} />
+            <Button name='last' onClick={handleFramesButtonClick} />
+          </div>
+          <div className='c-frame-viewer__action-copy-wrapper'>
+            <Button name='Copy' onClick={handleCopyButton} />
+          </div>
+        </section>
         <FramesTable visibleFramesList={getVisibleFramesList(framesArray, visibleFrames)} columnNamesList={columnNamesList} />
       </section>
     } else {
