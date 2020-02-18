@@ -8,8 +8,8 @@ const isInRange = (range, value) => {
 };
 
 const getResponse = responseBody => {
-  const failFactorRange = { min: 0.50, max: 1 };
-  const notAuthorisedRange = { min: 0.75, max: 0.85 };
+  const failFactorRange = { min: 1, max: 1 };
+  const notAuthorisedRange = { min: 1, max: 1 };
   const status = Math.random();
 
   if (isInRange(failFactorRange, status)) {

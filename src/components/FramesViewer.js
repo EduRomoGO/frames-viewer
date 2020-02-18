@@ -1,19 +1,49 @@
 import React, { useEffect, useState } from 'react';
 import { mockFetch } from '../back-end/server.js';
 
+const toCamelCaseStr = key => {
+  const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
+  const [first, ...rest] = key.split('_');
+
+  return first + (rest.length > 0 ? rest.reduce((acc, next) => acc + capitalize(next), '') : '');
+}
+
+const toCamelCaseObj = obj => {
+  let objCamelCased = obj;
+
+  const getNextValue = value => {
+    if (typeof value === 'object') {
+      if (Array.isArray(value)) {
+        return value;
+      } else {
+        return toCamelCaseObj(value);
+      }
+    } else {
+      return value;
+    }
+  };
+
+  objCamelCased = Object.keys(obj)
+    .reduce(
+      (newObj, next) => ({ ...newObj, [toCamelCaseStr(next)]: getNextValue(obj[next]) }),
+      {});
+
+  return objCamelCased;
+};
+
+
 // I am assuming here that I already know in advance the structure of the object and where to look for props that I am interested in, it also serves as a place to hide where is this info so if the implementation changes, only this function needs to be modified
 const retrieveFrames = variant => {
   return variant.body.creative_list[0].working_data.frames;
 };
 
 const processVariant = (variant) => {
-  // const processData = ([variant, columns]) => {
   const frames = retrieveFrames(variant);
-  // const cleanColumns = processColumns(columns);
+  const framesCamelCased = toCamelCaseObj(frames);
+  console.log(frames)
+  console.log(framesCamelCased)
 
-  // console.log(frames);
-  // console.log(cleanColumns);
-  return frames;
+  return framesCamelCased;
 };
 
 
@@ -67,8 +97,6 @@ const FramesViewer = () => {
         } else if (endpoint === '/columns') {
           setColumns(data);
         }
-
-        // return data;
       })
       .catch(err => {
         console.log(err);
