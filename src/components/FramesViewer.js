@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { mockFetch } from '../back-end/server.js';
+import FramesTable from './FramesTable/FramesTable.js';
 
 const toCamelCaseStr = key => {
   const capitalize = s => s.charAt(0).toUpperCase() + s.slice(1);
@@ -78,10 +79,6 @@ const processData = (endpoint, data) => {
 };
 
 
-// procesar los datos
-// pintar la tabla
-
-
 const FramesViewer = () => {
   const [visibleFrames, setVisibleFrames] = useState('first');
   const [variant, setVariant] = useState({});
@@ -144,55 +141,13 @@ const FramesViewer = () => {
     return <div>Loading...</div>
   }
 
-
-  const allColumnNames = columns => [...new Set(columns.map(({keyName}) => keyName))];
-
-  const renderTableHeader = names => {
-    const getDisplayName = name => name.replace('$', '').match(/[A-Z][a-z]+/g).join(' ');
-
-    return <thead>
-      <tr>
-        {names.map(name => <th key={name}>{getDisplayName(name)}</th>)}
-      </tr>
-    </thead>;
-  };
-
-  const getColumnsFor = (frameId, columns) => {
-    return columns.filter(({parentFrameId}) => parentFrameId === frameId);
-  }
-
-  const renderFrameRow = ({ frameId, content }, columns) => {
-    const getData = columnName => allColumnNames(getColumnsFor(frameId, columns)).includes(columnName) ? content[columnName] : '';
-
-    // content.filter(item => isItemInColumns)
-
-    return <tr key={frameId}>
-      {allColumnNames(columns).map(columnName => <td key={columnName}>{getData(columnName)}</td>)}
-    </tr>;
-  }
-
-  const renderTableBody = (frames, columns) => {
-    const framesArray = Array.isArray(frames) ? frames : [frames];
-
-    return <tbody>
-      {framesArray.length > 0 ? framesArray.map(frame => renderFrameRow(frame, columns)) : ''}
-    </tbody>
-  }
-
-  const renderTable = (columns, frames) => {
-    return <table>
-      {renderTableHeader(allColumnNames(columns))}
-      {renderTableBody(frames, columns)}
-    </table>;
-  }
-
   const renderFrameView = (visibleFrames, columns, variant) => {
     if (visibleFrames && columns.length && Object.keys(variant).length > 0) {
       return <section className='c-frame-view'>
         <header>
           <h1>Frames</h1>
         </header>
-        {renderTable(columns, variant[visibleFrames])}
+        <FramesTable variant={variant} columns={columns} visibleFrames={visibleFrames} />
       </section>
     } else {
       return '';
