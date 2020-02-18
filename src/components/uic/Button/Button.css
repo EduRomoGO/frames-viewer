@@ -1,5 +1,25 @@
+:root {
+  --color-dark:  #161616;
+  --color-ocean:  #416dea;
+  --color-grass: #3dd28d;
+  --color-snow: #FFFFFF;
+  --color-salmon: #F32C52;
+  --color-sun: #feee7d;
+  --color-alge: #7999a9;
+  --color-flower: #353866;
+  --color-smoke: #e4e4e4;
+}
+
 .button {
   border: none;
+  order: none;
+  background-color: blueviolet;
+  color: white;
+  border-radius: 3px;
+  padding: 0.3rem 1rem;
+  text-transform: capitalize;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 
