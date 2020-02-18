@@ -19,7 +19,6 @@ thead {
 th {
   text-transform: capitalize;
   font-weight: normal;
-  white-space: nowrap;
 }
 
 tr {

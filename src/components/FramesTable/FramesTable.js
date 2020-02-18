@@ -12,8 +12,13 @@ const renderTableHeader = names => {
 };
 
 const renderFrameRow = ({ frameId, content }, columns) => {
+  const getContent = columnName => {
+    // Asuming there is the only type of object, otherwise further diferentiation would be needed
+    return (typeof content[columnName] === 'object') ? content[columnName].url : content[columnName];
+  };
+
   return <tr key={frameId}>
-    {columns.map(columnName => <td key={columnName}>{content[columnName]}</td>)}
+    {columns.map(columnName => <td key={columnName}>{getContent(columnName)}</td>)}
   </tr>;
 }
 
