@@ -24,7 +24,6 @@ const renderFrameRow = ({ frameId, content }, columns) => {
 
 const renderTableBody = (frames, columns) => {
   const framesArray = Array.isArray(frames) ? frames : [frames];
-  console.log(framesArray)
 
   return <tbody>
     {framesArray.length > 0 ? framesArray.map(frame => renderFrameRow(frame, columns)) : ''}

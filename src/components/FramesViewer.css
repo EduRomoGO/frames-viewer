@@ -1,0 +1,32 @@
+.c-frames-viewer__actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+button + button {
+  margin-left: 0.5rem;
+}
+
+.modal {
+  /* position: absolute;
+  right: 0px;
+  left: 0px;
+  top: 0px;
+  bottom: 0px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal__text {
+  padding: 112px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 3px;
+  position: relative;
+}
+
+.modal__close {
+  position: absolute;
+}

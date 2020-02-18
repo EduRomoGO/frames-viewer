@@ -3,7 +3,11 @@ import { mockFetch } from '../back-end/server.js';
 import FramesTable from './FramesTable/FramesTable.js';
 import { processData, prepareForRender } from './dataConverter.js';
 import Button from './uic/Button/Button.js';
+import { copyToClipboard } from '../utils/copyToClipboard.js';
+import './FramesViewer.css';
+import Modal from 'react-modal';
 
+Modal.setAppElement('#root');
 
 const FramesViewer = () => {
   const [visibleFrames, setVisibleFrames] = useState('first');
@@ -14,6 +18,7 @@ const FramesViewer = () => {
     endpoints: {},
     error: false,
   });
+  const [isOpenModal, setIsOpenModal] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -24,7 +29,11 @@ const FramesViewer = () => {
 
     fetchData();
   }, []);
-
+  useEffect(() => {
+    if (visibleFrames === 'all') {
+      copyToClipboard(JSON.stringify(frames));
+    }
+  }, [frames, visibleFrames]);
 
 
   function fetchEndpointData(endpoint) {
@@ -55,7 +64,6 @@ const FramesViewer = () => {
   }
 
 
-
   function doRetry() {
     setIsError({
       endpoints: {},
@@ -64,8 +72,42 @@ const FramesViewer = () => {
     Object.keys(isError.endpoints).forEach(endpoint => fetchEndpointData(endpoint));
   }
 
-  const renderErrorView = () => {
-    return <div>an error happened <button onClick={doRetry}>try again</button></div>;
+  const renderServerError = () => {
+    return <div key='serverError'>an error happened <button onClick={doRetry}>try again</button></div>;
+  }
+
+  const renderUnauthorizedError = () => {
+
+    // I am asuming that closing the modal clears the errors
+    const closeModal = () => {
+      doRetry();
+    };
+
+    return <Modal
+      key='modal'
+      isOpen={isError.error}
+      onRequestClose={closeModal}
+    >
+      <div>You are not authorised</div>
+    </Modal>
+    // return <div key='modal' className='modal'>
+    //   <div className='modal__close'>x</div>
+    //   <div className='modal__text'>You are not authorised</div>
+    // </div>
+  }
+
+  const renderErrorView = isError => {
+    const getErrorView = () => {
+      const endpoint = Object.keys(isError.endpoints)[0];
+
+      if (isError.endpoints[endpoint] === '401') {
+        return renderUnauthorizedError();
+      } else if (isError.endpoints[endpoint] === '500') {
+        return renderServerError();
+      }
+    };
+
+    return <div className='c-error'>{getErrorView()}</div>;
   }
 
   const renderLoadingView = () => {
@@ -87,17 +129,17 @@ const FramesViewer = () => {
         setVisibleFrames('all');
       }
 
-      return <section className='c-frame-viewer__subwrapper'>
+      return <section className='c-frames-viewer__subwrapper'>
         <header>
           <h1>Frames</h1>
         </header>
-        <section className='c-frame-viewer__actions'>
-          <div className='c-frame-viewer__actions-frames'>
+        <section className='c-frames-viewer__actions'>
+          <div className='c-frames-viewer__actions-frames'>
             <Button name='first' onClick={handleFramesButtonClick} />
             <Button name='middle' onClick={handleFramesButtonClick} />
             <Button name='last' onClick={handleFramesButtonClick} />
           </div>
-          <div className='c-frame-viewer__action-copy-wrapper'>
+          <div className='c-frames-viewer__action-copy-wrapper'>
             <Button name='Copy' onClick={handleCopyButton} />
           </div>
         </section>
@@ -113,7 +155,7 @@ const FramesViewer = () => {
     {
       isLoading
         ? renderLoadingView()
-        : isError.error ? renderErrorView() : renderFrameView(visibleFrames, columns, frames)
+        : isError.error ? renderErrorView(isError) : renderFrameView(visibleFrames, columns, frames)
     }
   </section>
 };
