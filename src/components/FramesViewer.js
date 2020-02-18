@@ -8,30 +8,39 @@ const toCamelCaseStr = key => {
   return first + (rest.length > 0 ? rest.reduce((acc, next) => acc + capitalize(next), '') : '');
 }
 
-const toCamelCaseObj = obj => {
-  let objCamelCased = obj;
+const toCamelCaseData = data => {
+  let dataCamelCased = data;
 
   const getNextValue = value => {
     if (typeof value === 'object') {
       if (Array.isArray(value)) {
-        return value;
+        return value.map(item => getNextValue(item));
       } else {
-        return toCamelCaseObj(value);
+        return toCamelCaseData(value);
       }
     } else {
       return value;
     }
   };
 
-  objCamelCased = Object.keys(obj)
-    .reduce(
-      (newObj, next) => ({ ...newObj, [toCamelCaseStr(next)]: getNextValue(obj[next]) }),
-      {});
 
-  return objCamelCased;
+  if (typeof data === 'object') {
+    if (Array.isArray(data)) {
+      dataCamelCased = data.map(item => getNextValue(item));
+    } else {
+      dataCamelCased = Object.keys(data)
+        .reduce(
+          (newObj, next) => ({ ...newObj, [toCamelCaseStr(next)]: getNextValue(data[next]) }),
+          {});
+    }
+  } else {
+    dataCamelCased = data;
+  }
+
+  return dataCamelCased;
 };
 
-
+// Im doing this previous to the camelCase transform so it is faster
 // I am assuming here that I already know in advance the structure of the object and where to look for props that I am interested in, it also serves as a place to hide where is this info so if the implementation changes, only this function needs to be modified
 const retrieveFrames = variant => {
   return variant.body.creative_list[0].working_data.frames;
@@ -39,18 +48,28 @@ const retrieveFrames = variant => {
 
 const processVariant = (variant) => {
   const frames = retrieveFrames(variant);
-  const framesCamelCased = toCamelCaseObj(frames);
+  const framesCamelCased = toCamelCaseData(frames);
   console.log(frames)
   console.log(framesCamelCased)
 
   return framesCamelCased;
 };
 
-
-const processColumns = columns => {
+// Im doing this previous to the camelCase transform so it is faster
+const retrieveInterestingData = columns => {
   return columns.body
     .filter(item => item.is_hidden === false)
     .map(({ id, parent_frame_id, size_id, key_name }) => ({ id, parent_frame_id, size_id, key_name }));
+}
+
+const processColumns = columns => {
+  const subColumns = retrieveInterestingData(columns);
+  const subColumnsCamelCase = toCamelCaseData(subColumns);
+
+  console.log(subColumns);
+  console.log(subColumnsCamelCase);
+
+  return subColumnsCamelCase;
 }
 
 
