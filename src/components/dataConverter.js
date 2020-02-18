@@ -78,9 +78,38 @@ export const processData = (endpoint, data) => {
 const allColumnNames = columns => [...new Set(columns.map(({ keyName }) => keyName))];
 
 
-export const prepareForRender = ({columns, frames}) => {
+const getColumnsByFrameId = columns => {
+  const allFrameIdsInColumns = [...new Set(columns.map(({ parentFrameId }) => parentFrameId))];
+
+  return allFrameIdsInColumns.reduce((acc, next) => ({...acc, [next]: columns.filter(n => n.parentFrameId === next)}), {});
+}
+
+const framesToArray = frames => {
+  return Object.keys(frames).reduce((acc, next) => {
+    const newFrames = Array.isArray(frames[next]) ? frames[next] : [frames[next]];
+
+    return [...acc, ...newFrames.map(item => ({...item, position: next}))];
+  }, []);
+}
+
+const completeFramesArray = (framesArray, columnsByFrameId) => {
+  const getContent = frame => {
+    const filteredKeys = Object.keys(frame.content)
+      .filter(item => columnsByFrameId[frame.frameId].map(n => n.keyName).includes(item));
+
+    return filteredKeys.reduce((acc, next) => ({...acc, [next]: frame.content[next]}), {});
+  }
+
+  return framesArray.map(frame => ({...frame, content: getContent(frame)}));
+}
+
+export const prepareForRender = ({columns, frames: framesObj}) => {
+  const columnNamesList = allColumnNames(columns);
+  const framesArray = framesToArray(framesObj);
+  const columnsByFrameId = getColumnsByFrameId(columns);
+
   return {
-    columnNamesList: allColumnNames(columns),
-    // framesArr:
+    columnNamesList,
+    framesArray: completeFramesArray(framesArray, columnsByFrameId),
   };
 };

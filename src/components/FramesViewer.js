@@ -71,14 +71,16 @@ const FramesViewer = () => {
 
   const renderFrameView = (visibleFrames, columns, frames) => {
     if (visibleFrames && columns.length && Object.keys(frames).length > 0) {
-      const { columnNamesList, framesArr } = prepareForRender({columns, frames})
+      const { columnNamesList, framesArray } = prepareForRender({columns, frames})
+      const getVisibleFramesList = (framesArray, visibleFrames) => {
+        return framesArray.filter(item => item.position === visibleFrames);
+      }
 
       return <section className='c-frame-view'>
         <header>
           <h1>Frames</h1>
         </header>
-        <FramesTable columns={columns} visibleFramesList={frames[visibleFrames]} />
-        {/* {/* <FramesTable frames={framesArr} columnNamesList={columnNamesList} /> */} */}
+        <FramesTable visibleFramesList={getVisibleFramesList(framesArray, visibleFrames)} columnNamesList={columnNamesList} />
       </section>
     } else {
       return '';

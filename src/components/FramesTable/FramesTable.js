@@ -1,8 +1,5 @@
 import React from 'react';
 
-
-const allColumnNames = columns => [...new Set(columns.map(({ keyName }) => keyName))];
-
 const renderTableHeader = names => {
   const getDisplayName = name => name.replace('$', '').match(/[A-Z][a-z]+/g).join(' ');
 
@@ -13,21 +10,15 @@ const renderTableHeader = names => {
   </thead>;
 };
 
-const getColumnsFor = (frameId, columns) => {
-  return columns.filter(({ parentFrameId }) => parentFrameId === frameId);
-}
-
 const renderFrameRow = ({ frameId, content }, columns) => {
-  const getData = columnName => allColumnNames(getColumnsFor(frameId, columns)).includes(columnName) ? content[columnName] : '';
-
   return <tr key={frameId}>
-    {allColumnNames(columns).map(columnName => <td key={columnName}>{getData(columnName)}</td>)}
-    {/* {allColumnNames(columns).map(columnName => <td key={columnName}>{content[columnName]}</td>)} */}
+    {columns.map(columnName => <td key={columnName}>{content[columnName]}</td>)}
   </tr>;
 }
 
 const renderTableBody = (frames, columns) => {
   const framesArray = Array.isArray(frames) ? frames : [frames];
+  console.log(framesArray)
 
   return <tbody>
     {framesArray.length > 0 ? framesArray.map(frame => renderFrameRow(frame, columns)) : ''}
@@ -35,9 +26,9 @@ const renderTableBody = (frames, columns) => {
 }
 
 
-const FramesTable = ({ visibleFramesList: frames, columns }) => {
+const FramesTable = ({ visibleFramesList: frames, columnNamesList: columns }) => {
   return <table>
-    {renderTableHeader(allColumnNames(columns))}
+    {renderTableHeader(columns)}
     {renderTableBody(frames, columns)}
   </table>
 };
