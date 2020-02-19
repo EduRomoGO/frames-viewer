@@ -20,7 +20,7 @@ const FramesViewer = () => {
 
 
   const renderServerError = () => {
-    return <div key='serverError'>an error happened <button onClick={doRetry}>try again</button></div>;
+    return <div key='serverError'>An error happened, please try again <Button name='try again' onClick={doRetry} /></div>;
   }
 
   const renderUnauthorizedError = () => {
